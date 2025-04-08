@@ -26,10 +26,16 @@ const Conversation = require("./models/Conversation");
 const Message = require("./models/Message");
 const Contact = require("./models/Contact");
 
+// Importation des routes
+const userRoutes = require('./routes/userRoutes');
+
 // Routes de base
 app.get("/", (req, res) => {
   res.send("API WhatsApp est en ligne!");
 });
+
+// Routes
+app.use('/api/users', userRoutes);
 
 // Démarrage du serveur
 app.listen(PORT, () => {
