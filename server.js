@@ -28,6 +28,7 @@ const Contact = require("./models/Contact");
 
 // Importation des routes
 const userRoutes = require('./routes/userRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 
 // Routes de base
 app.get("/", (req, res) => {
@@ -36,6 +37,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/contacts', contactRoutes);
 
 // Démarrage du serveur
 app.listen(PORT, () => {
