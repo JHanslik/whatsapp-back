@@ -27,8 +27,10 @@ const Message = require("./models/Message");
 const Contact = require("./models/Contact");
 
 // Importation des routes
-const userRoutes = require('./routes/userRoutes');
-const contactRoutes = require('./routes/contactRoutes');
+const userRoutes = require("./routes/userRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const conversationRoutes = require("./routes/conversationRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 // Routes de base
 app.get("/", (req, res) => {
@@ -36,8 +38,10 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use('/api/users', userRoutes);
-app.use('/api/contacts', contactRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/contacts", contactRoutes);
+app.use("/api/conversations", conversationRoutes);
+app.use("/api/messages", messageRoutes);
 
 // Démarrage du serveur
 app.listen(PORT, () => {
