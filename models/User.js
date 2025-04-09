@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
+const hashPassword = require("../middleware/passwordMiddleware");
 
 const userSchema = new Schema({
   phone: {
@@ -22,21 +23,8 @@ const userSchema = new Schema({
   },
 });
 
-// Méthode pour hacher le mot de passe avant l'enregistrement
-userSchema.pre("save", async function (next) {
-  // Ne hache le mot de passe que s'il a été modifié (ou est nouveau)
-  if (!this.isModified("password")) return next();
-
-  try {
-    // Générer un sel
-    const salt = await bcrypt.genSalt(10);
-    // Hacher le mot de passe avec le sel
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+// Utiliser le middleware externe pour le hachage du mot de passe
+userSchema.pre("save", hashPassword);
 
 // Méthode pour comparer le mot de passe saisi avec le mot de passe haché
 userSchema.methods.comparePassword = async function (candidatePassword) {
