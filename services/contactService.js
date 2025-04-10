@@ -3,9 +3,6 @@ const User = require("../models/User");
 
 class ContactService {
   static async addContact(userId, contactId) {
-    // Log pour debug
-    console.log("Données reçues:", { userId, contactId });
-
     // Vérifier si l'utilisateur existe
     const user = await User.findById(userId);
     if (!user) {

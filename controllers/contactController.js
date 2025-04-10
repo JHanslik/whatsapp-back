@@ -7,11 +7,7 @@ class ContactController {
       const contact = await ContactService.addContact(userId, contactId);
       res.status(201).json(contact);
     } catch (error) {
-      console.error("Erreur détaillée:", error);
-      res.status(500).json({
-        message: "Erreur serveur",
-        error: error.message,
-      });
+      res.status(500).json({ message: error.message });
     }
   }
 
