@@ -1,53 +1,61 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { comparePasswords } = require("./passwordService");
 
 class UserService {
+  // Fonction utilitaire pour normaliser les numéros de téléphone
+  static normalizePhoneNumber(phone) {
+    // Si le numéro commence par +33, le convertir en 0
+    if (phone.startsWith("+33")) {
+      return `0${phone.slice(3)}`;
+    }
+    // Si le numéro ne commence pas par 0, ajouter le 0
+    if (!phone.startsWith("0")) {
+      return `0${phone}`;
+    }
+    return phone;
+  }
+
   static async registerUser(phone, firstName, lastName, password) {
+    const normalizedPhone = this.normalizePhoneNumber(phone);
     // Vérifier si l'utilisateur existe déjà
-    const existingUser = await User.findOne({ phone });
+    const existingUser = await User.findOne({ phone: normalizedPhone });
     if (existingUser) {
       throw new Error("Un utilisateur avec ce numéro existe déjà");
     }
 
-    // Créer le nouvel utilisateur
+    // Créer le nouvel utilisateur avec le numéro normalisé
     const user = new User({
-      phone,
+      phone: normalizedPhone,
       firstName,
       lastName,
-      password, // Le mot de passe sera haché automatiquement par le middleware pre-save
+      password,
     });
 
     await user.save();
-
-    // Ne pas renvoyer le mot de passe dans la réponse
     const userResponse = user.toObject();
     delete userResponse.password;
-
     return userResponse;
   }
 
   static async loginUser(phone, password) {
-    // Trouver l'utilisateur par numéro de téléphone
     const user = await User.findOne({ phone });
     if (!user) {
       throw new Error("Numéro de téléphone ou mot de passe incorrect");
     }
 
-    // Vérifier le mot de passe
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await comparePasswords(password, user.password);
     if (!isMatch) {
       throw new Error("Numéro de téléphone ou mot de passe incorrect");
     }
 
-    // Générer le token JWT
     const token = jwt.sign(
       { userId: user._id, phone: user.phone },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
 
-    // Ne pas renvoyer le mot de passe dans la réponse
     const userResponse = user.toObject();
     delete userResponse.password;
 
@@ -55,7 +63,8 @@ class UserService {
   }
 
   static async searchUserByPhone(phone) {
-    const user = await User.findOne({ phone });
+    const normalizedPhone = this.normalizePhoneNumber(phone);
+    const user = await User.findOne({ phone: normalizedPhone });
     if (!user) {
       throw new Error("Utilisateur non trouvé");
     }

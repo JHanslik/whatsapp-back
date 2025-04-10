@@ -13,12 +13,17 @@ app.use(express.json());
 
 // Connection à MongoDB
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log("MongoDB connecté");
+    }
   })
-  .then(() => console.log("MongoDB connecté"))
-  .catch((err) => console.error("Erreur de connexion MongoDB:", err));
+  .catch((err) => {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Erreur de connexion MongoDB:", err);
+    }
+  });
 
 // Importation des modèles
 const User = require("./models/User");
@@ -45,5 +50,7 @@ app.use("/api/messages", messageRoutes);
 
 // Démarrage du serveur
 app.listen(PORT, () => {
-  console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
+  }
 });
