@@ -56,6 +56,21 @@ class ContactService {
     }
     return { message: "Contact supprimé avec succès" };
   }
+
+  static async updateContactAlias(contactId, alias) {
+    const contact = await Contact.findById(contactId);
+    if (!contact) {
+      throw new Error("Contact non trouvé");
+    }
+
+    contact.alias = alias;
+    await contact.save();
+
+    return Contact.findById(contactId).populate(
+      "contactId",
+      "firstName lastName phone"
+    );
+  }
 }
 
 module.exports = ContactService;

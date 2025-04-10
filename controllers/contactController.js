@@ -32,6 +32,17 @@ class ContactController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  static async updateContactAlias(req, res) {
+    try {
+      const { contactId } = req.params;
+      const { alias } = req.body;
+      const contact = await ContactService.updateContactAlias(contactId, alias);
+      res.json(contact);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
 }
 
 module.exports = ContactController;
