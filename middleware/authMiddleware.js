@@ -5,14 +5,20 @@ const authMiddleware = (req, res, next) => {
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      return res.status(401).json({ message: "Accès non autorisé" });
+      console.log("Aucun token d'authentification fourni");
+      // Au lieu de bloquer, on continue avec un champ user null
+      req.user = null;
+      return next();
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Token invalide" });
+    console.log("Erreur de vérification du token:", error.message);
+    // Au lieu de bloquer, on continue avec un champ user null
+    req.user = null;
+    next();
   }
 };
 

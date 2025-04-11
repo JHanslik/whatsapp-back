@@ -4,6 +4,7 @@ const UserController = require("../controllers/userController");
 const authMiddleware = require("../middleware/authMiddleware");
 const normalizePhoneMiddleware = require("../middleware/phoneMiddleware");
 const hashPasswordMiddleware = require("../middleware/passwordMiddleware");
+const { uploadMiddleware } = require("../services/cloudinary");
 
 // Routes publiques
 router.post(
@@ -27,6 +28,21 @@ router.put(
   normalizePhoneMiddleware,
   hashPasswordMiddleware,
   UserController.updateUser
+);
+
+router.post(
+  "/profile-image",
+  authMiddleware,
+  uploadMiddleware,
+  UserController.updateProfileImage
+);
+
+// Route alternative avec userId en paramètre
+router.post(
+  "/profile-image/:userId",
+  authMiddleware,
+  uploadMiddleware,
+  UserController.updateProfileImage
 );
 
 module.exports = router;
