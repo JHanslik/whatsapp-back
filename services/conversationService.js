@@ -19,7 +19,7 @@ class ConversationService {
   static async getUserConversations(userId) {
     return Conversation.find({
       participants: userId,
-    }).populate("participants", "firstName lastName phone");
+    }).populate("participants", "firstName lastName phone profileImage");
   }
 
   static async deleteConversation(conversationId) {

@@ -36,14 +36,14 @@ class ContactService {
     // Populate les informations du contact
     return Contact.findById(contact._id).populate(
       "contactId",
-      "firstName lastName phone"
+      "firstName lastName phone profileImage"
     );
   }
 
   static async getUserContacts(userId) {
     return Contact.find({
       ownerId: userId,
-    }).populate("contactId", "firstName lastName phone");
+    }).populate("contactId", "firstName lastName phone profileImage");
   }
 
   static async deleteContact(contactId) {
@@ -65,7 +65,7 @@ class ContactService {
 
     return Contact.findById(contactId).populate(
       "contactId",
-      "firstName lastName phone"
+      "firstName lastName phone profileImage"
     );
   }
 }
